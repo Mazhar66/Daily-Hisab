@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Daily Hisab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Mukta:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f3f6fb;--card:#fff;--tx:#14213d;--mu:#5d6b88;--pr:#17306b;--on:#fff;--soft:#e4ebf8;--bd:#d5deee;--mar:#f5a300;--red:#c9402f;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1626;--card:#17223a;--tx:#e8eefb;--mu:#98a6c4;--pr:#8fb0ff;--on:#0f1626;--soft:#22304f;--bd:#2c3b5e;--mar:#ffc247;--red:#ff7a66}}
+:root[data-theme="dark"]{--bg:#0f1626;--card:#17223a;--tx:#e8eefb;--mu:#98a6c4;--pr:#8fb0ff;--on:#0f1626;--soft:#22304f;--bd:#2c3b5e;--mar:#ffc247;--red:#ff7a66}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:400 17px/1.45 Mukta,system-ui,sans-serif}
+#main{max-width:560px;margin:0 auto;padding:14px 14px 96px}
+.row{display:flex;align-items:center;gap:10px}.c{justify-content:center;margin:8px 0}.g{flex:1;min-width:0}
+.mu{color:var(--mu)}.sm{font-size:14px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:12px 14px;margin:10px 0}
+.em{font-size:30px}.amt{font-weight:800;font-size:20px;color:var(--pr)}
+.q{min-width:96px;text-align:center;font-size:22px;font-weight:800}
+button,input,select,textarea{font:inherit;color:inherit}
+.ib{width:46px;height:46px;border-radius:50%;border:2px solid var(--pr);background:transparent;color:var(--pr);font-size:26px;line-height:1;cursor:pointer}
+.btn{display:inline-block;text-decoration:none;text-align:center;padding:10px 16px;border-radius:10px;border:2px solid var(--pr);background:var(--pr);color:var(--on);font-weight:600;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--pr)}.btn.red{border-color:var(--red);background:var(--red);color:#fff}.btn.full{display:block;width:100%;margin:10px 0}
+:focus-visible{outline:3px solid var(--mar);outline-offset:2px}
+label{display:block;margin:10px 0 4px;font-weight:600}
+input,select,textarea{width:100%;padding:10px;border-radius:10px;border:1px solid var(--bd);background:var(--card)}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0}
+.chip{padding:8px 14px;border-radius:99px;border:1.5px solid var(--bd);background:var(--card);cursor:pointer}.chip.on{background:var(--pr);color:var(--on);border-color:var(--pr)}
+.grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}.grid .h{text-align:center;color:var(--mu);font-size:13px}
+.cell{aspect-ratio:1;border-radius:8px;border:1px solid var(--bd);background:var(--card);padding:2px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;line-height:1.1}
+.cell small{color:var(--mu);font-size:11px}.cell b{font-size:14px}.cell.x{background:var(--red);border-color:var(--red);color:#fff}.cell.x small{color:#fff}
+.cell.ex{border:2px solid var(--mar)}.cell:disabled{opacity:.35;cursor:default}
+nav{position:fixed;left:0;right:0;bottom:0;display:flex;background:var(--card);border-top:1px solid var(--bd);padding-bottom:env(safe-area-inset-bottom,0px)}
+nav button{flex:1;padding:12px 4px;border:0;background:transparent;font-weight:600;color:var(--mu);cursor:pointer;border-top:3px solid transparent}
+nav button.on{color:var(--pr);border-top-color:var(--mar)}
+h2{margin:6px 0;font-size:22px;font-weight:800}
+.tot{font-size:26px;font-weight:800;color:var(--pr)}
+.paid{color:#1f8a4c;font-weight:600}
+textarea{height:90px;font-size:12px}
+</style>
+</head>
+<body>
+<div id="main"></div>
+<nav id="nav"></nav>
+<script>
+var L={
+en:{today:'Today',cal:'Calendar',bill:'Bill',setup:'Setup',add:'Add service',name:'Name',type:'Type',unit:'Unit',qty:'Daily quantity',rate:'Rate (₹)',start:'Start date',save:'Save',del:'Delete',sure:'Tap again to confirm',skip:'Not came',undo:'Undo',total:'Total',days:'days',unpaid:'Mark as paid',paid:'Paid ✓',share:'Share on WhatsApp',newrate:'Change rate',from:'From date',apply:'Apply',none:'No services yet. Add milk, newspaper, maid…',backup:'Backup & restore',copy:'Copy',restore:'Restore',lang:'Language',hist:'Rate history',tip:'The daily quantity is counted automatically. Tap “Not came” only on days it did not come.',made:'Made with Daily Hisab',cancel:'Cancel',bk:'Copy this text to save a backup. To restore, paste a backup here and tap Restore.',ok:'Done',bad:'Could not read this backup',t_milk:'Milk',t_news:'Newspaper',t_maid:'Maid',t_tiffin:'Tiffin',t_water:'Water can',t_veg:'Vegetables',t_other:'Other',u_litre:'litre',u_piece:'piece',u_day:'day',u_can:'can',sk:'skipped'},
+hi:{today:'आज',cal:'कैलेंडर',bill:'बिल',setup:'सेटअप',add:'सेवा जोड़ें',name:'नाम',type:'प्रकार',unit:'इकाई',qty:'रोज़ की मात्रा',rate:'दर (₹)',start:'शुरू की तारीख',save:'सेव करें',del:'हटाएं',sure:'पक्का करने के लिए फिर दबाएं',skip:'नहीं आया',undo:'वापस',total:'कुल',days:'दिन',unpaid:'चुकाया मार्क करें',paid:'चुकाया ✓',share:'WhatsApp पर भेजें',newrate:'दर बदलें',from:'किस तारीख से',apply:'लागू करें',none:'अभी कोई सेवा नहीं। दूध, अखबार, बाई… जोड़ें',backup:'बैकअप और रीस्टोर',copy:'कॉपी',restore:'रीस्टोर',lang:'भाषा',hist:'दर का इतिहास',tip:'रोज़ की मात्रा अपने-आप गिनी जाती है। जिस दिन नहीं आया, सिर्फ़ उसी दिन “नहीं आया” दबाएं।',made:'Daily Hisab से बनाया',cancel:'रद्द करें',bk:'बैकअप के लिए यह टेक्स्ट कॉपी करें। रीस्टोर करने के लिए बैकअप यहां पेस्ट करके रीस्टोर दबाएं।',ok:'हो गया',bad:'यह बैकअप पढ़ा नहीं जा सका',t_milk:'दूध',t_news:'अखबार',t_maid:'बाई',t_tiffin:'टिफिन',t_water:'पानी की कैन',t_veg:'सब्ज़ी',t_other:'अन्य',u_litre:'लीटर',u_piece:'नग',u_day:'दिन',u_can:'कैन',sk:'नहीं आया'},
+mr:{today:'आज',cal:'कॅलेंडर',bill:'बिल',setup:'सेटअप',add:'सेवा जोडा',name:'नाव',type:'प्रकार',unit:'एकक',qty:'रोजचे प्रमाण',rate:'दर (₹)',start:'सुरुवातीची तारीख',save:'सेव्ह करा',del:'काढा',sure:'खात्रीसाठी पुन्हा दाबा',skip:'आले नाही',undo:'परत',total:'एकूण',days:'दिवस',unpaid:'दिले म्हणून नोंदवा',paid:'दिले ✓',share:'WhatsApp वर पाठवा',newrate:'दर बदला',from:'कोणत्या तारखेपासून',apply:'लागू करा',none:'अजून सेवा नाही. दूध, पेपर, मावशी… जोडा',backup:'बॅकअप आणि रिस्टोअर',copy:'कॉपी',restore:'रिस्टोअर',lang:'भाषा',hist:'दराचा इतिहास',tip:'रोजचे प्रमाण आपोआप मोजले जाते. ज्या दिवशी आले नाही, फक्त त्याच दिवशी “आले नाही” दाबा.',made:'Daily Hisab ने बनवले',cancel:'रद्द करा',bk:'बॅकअपसाठी हा मजकूर कॉपी करा. रिस्टोअर करण्यासाठी बॅकअप येथे पेस्ट करून रिस्टोअर दाबा.',ok:'झाले',bad:'हा बॅकअप वाचता आला नाही',t_milk:'दूध',t_news:'पेपर',t_maid:'मावशी',t_tiffin:'डबा',t_water:'पाण्याचा जार',t_veg:'भाजी',t_other:'इतर',u_litre:'लिटर',u_piece:'नग',u_day:'दिवस',u_can:'जार',sk:'आले नाही'}};
+var LOC={en:'en-IN',hi:'hi-IN',mr:'mr-IN'},TY={milk:'🥛',news:'📰',maid:'🧹',tiffin:'🍱',water:'💧',veg:'🥦',other:'📦'},UN=['litre','piece','day','can'];
+var S=null;try{S=JSON.parse(localStorage.getItem('dh'))}catch(e){}
+S=S||{lang:null,v:[],e:{},p:{}};
+function save(){try{localStorage.setItem('dh',JSON.stringify(S))}catch(e){}}
+var $=function(s){return document.querySelector(s)};
+function t(k){return (L[S.lang]||L.en)[k]||L.en[k]||k}
+function esc(s){return String(s).replace(/[&<>"']/g,function(c){return '&#'+c.charCodeAt(0)+';'})}
+function pad(n){return String(n).padStart(2,'0')}
+function iso(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())}
+function parse(s){var a=s.split('-');return new Date(+a[0],+a[1]-1,+a[2])}
+function money(n){return '₹'+(Math.round(n*100)/100).toLocaleString('en-IN')}
+function loc(){return LOC[S.lang]||'en-IN'}
+var TODAY=iso(new Date()),tab='today',day=TODAY,ym=TODAY.slice(0,7),cv=null,ed=null,sure=null;
+function rateAt(v,d){var r=v.rates[0].rate;v.rates.forEach(function(x){if(x.from<=d)r=x.rate});return r}
+function qtyAt(v,d){if(d<v.start)return null;var k=v.id+'|'+d;return k in S.e?S.e[k]:v.qty}
+function setE(v,d,q){var k=v.id+'|'+d;if(q===v.qty)delete S.e[k];else S.e[k]=q;save()}
+function mc(v,m){var Y=+m.slice(0,4),M=+m.slice(5),n=new Date(Y,M,0).getDate(),r={days:0,qty:0,amt:0,sk:0};
+for(var i=1;i<=n;i++){var d=m+'-'+pad(i);if(d>TODAY)break;var q=qtyAt(v,d);if(q===null)continue;if(q===0)r.sk++;else{r.days++;r.qty+=q;r.amt+=q*rateAt(v,d)}}return r}
+function monthTitle(m){return parse(m+'-01').toLocaleDateString(loc(),{month:'long',year:'numeric'})}
+function vend(id){return S.v.filter(function(x){return x.id===id})[0]}
+function go(x){tab=x;ed=null;sure=null;render()}
+function mv(n){var d=parse(day);d.setDate(d.getDate()+n);var s=iso(d);if(s>TODAY)return;day=s;ym=s.slice(0,7);render()}
+function mm(n){var d=parse(ym+'-01');d.setMonth(d.getMonth()+n);ym=iso(d).slice(0,7);render()}
+function adj(id,sg){var v=vend(id),q=qtyAt(v,day),st=v.unit==='litre'?.5:1;setE(v,day,Math.max(0,q+sg*st));render()}
+function skip(id){var v=vend(id);setE(v,day,qtyAt(v,day)===0?v.qty:0);render()}
+function pickDay(d){day=d;go('today')}
+function togglePaid(id){var k=id+'|'+ym;if(S.p[k])delete S.p[k];else S.p[k]=1;save();render()}
+function setLang(l){S.lang=l;save();render()}
+function monthNav(){return '<div class="row c"><button class="ib" aria-label="prev" onclick="mm(-1)">‹</button><b>'+monthTitle(ym)+'</b><button class="ib" aria-label="next" onclick="mm(1)">›</button></div>'}
+
+function vToday(){
+var d=parse(day),h='<div class="row c"><button class="ib" aria-label="prev" onclick="mv(-1)">‹</button><b>'+d.toLocaleDateString(loc(),{weekday:'short',day:'numeric',month:'short'})+(day===TODAY?' · '+t('today'):'')+'</b><button class="ib" aria-label="next" onclick="mv(1)">›</button></div>';
+if(!S.v.length)return h+'<p class="mu">'+t('none')+'</p><button class="btn full" onclick="go(\'setup\');addV()">+ '+t('add')+'</button>';
+h+='<p class="mu sm">'+t('tip')+'</p>';
+S.v.forEach(function(v){var q=qtyAt(v,day);if(q===null)return;var sk=q===0,r=rateAt(v,day);
+h+='<div class="card"><div class="row"><span class="em">'+TY[v.type]+'</span><div class="g"><b>'+esc(v.name)+'</b><div class="mu sm">'+money(r)+' / '+t('u_'+v.unit)+'</div></div><div class="amt">'+money(q*r)+'</div></div>'+
+'<div class="row c"><button class="ib" aria-label="minus" onclick="adj(\''+v.id+'\',-1)">−</button><span class="q">'+(sk?'—':q+' '+t('u_'+v.unit))+'</span><button class="ib" aria-label="plus" onclick="adj(\''+v.id+'\',1)">+</button><button class="btn '+(sk?'':'ghost')+'" onclick="skip(\''+v.id+'\')">'+(sk?t('undo'):t('skip'))+'</button></div></div>'});
+return h}
+
+function vCal(){
+if(!S.v.length)return '<p class="mu">'+t('none')+'</p>';
+var v=vend(cv)||S.v[0];cv=v.id;
+var h='<div class="chips">'+S.v.map(function(x){return '<button class="chip '+(x.id===cv?'on':'')+'" onclick="cv=\''+x.id+'\';render()">'+TY[x.type]+' '+esc(x.name)+'</button>'}).join('')+'</div>'+monthNav();
+var Y=+ym.slice(0,4),M=+ym.slice(5),n=new Date(Y,M,0).getDate(),off=new Date(Y,M-1,1).getDay();
+h+='<div class="grid">';
+for(var i=0;i<7;i++)h+='<div class="h">'+new Date(2024,0,7+i).toLocaleDateString(loc(),{weekday:'narrow'})+'</div>';
+for(var b=0;b<off;b++)h+='<div></div>';
+for(var dd=1;dd<=n;dd++){var ds=ym+'-'+pad(dd),q=qtyAt(v,ds),dis=q===null||ds>TODAY;
+h+='<button class="cell '+(q===0&&!dis?'x':'')+' '+(!dis&&q>v.qty?'ex':'')+'" '+(dis?'disabled':'onclick="pickDay(\''+ds+'\')"')+'><small>'+dd+'</small><b>'+(dis?'':q===0?'✕':q)+'</b></button>'}
+var s=mc(v,ym);
+return h+'</div><div class="card"><div class="row"><div class="g">'+s.days+' '+t('days')+' · '+s.qty+' '+t('u_'+v.unit)+(s.sk?' · '+s.sk+' '+t('sk'):'')+'</div><div class="amt">'+money(s.amt)+'</div></div></div>'}
+
+function vBill(){
+if(!S.v.length)return '<p class="mu">'+t('none')+'</p>';
+var h=monthNav(),tot=0,txt=monthTitle(ym)+'\n';
+S.v.forEach(function(v){var s=mc(v,ym);if(!s.days&&!s.sk)return;tot+=s.amt;var pd=S.p[v.id+'|'+ym];
+txt+=TY[v.type]+' '+v.name+': '+s.days+' '+t('days')+', '+s.qty+' '+t('u_'+v.unit)+' = '+money(s.amt)+'\n';
+h+='<div class="card"><div class="row"><span class="em">'+TY[v.type]+'</span><div class="g"><b>'+esc(v.name)+'</b><div class="mu sm">'+s.days+' '+t('days')+' · '+s.qty+' '+t('u_'+v.unit)+(s.sk?' · '+s.sk+' '+t('sk'):'')+'</div></div><div class="amt">'+money(s.amt)+'</div></div>'+
+'<div class="row c">'+(pd?'<span class="paid">'+t('paid')+'</span>':'')+'<button class="btn ghost" onclick="togglePaid(\''+v.id+'\')">'+(pd?t('undo'):t('unpaid'))+'</button></div></div>'});
+txt+=t('total')+': '+money(tot)+'\n'+t('made');
+return h+'<div class="card row"><div class="g"><b>'+t('total')+'</b></div><div class="tot">'+money(tot)+'</div></div><a class="btn full" target="_blank" rel="noopener" href="https://wa.me/?text='+encodeURIComponent(txt)+'">'+t('share')+'</a>'}
+
+function addV(){ed={id:null,type:'milk',name:'',unit:'litre',qty:1,rate:60,start:TODAY};render()}
+function editV(id){ed=JSON.parse(JSON.stringify(vend(id)));render()}
+function vSetup(){
+if(ed){var n=!ed.id;
+var h='<h2>'+(n?t('add'):esc(ed.name))+'</h2><label>'+t('type')+'</label><div class="chips">'+Object.keys(TY).map(function(k){return '<button class="chip '+(ed.type===k?'on':'')+'" onclick="keep();var o=t(\'t_\'+ed.type);ed.type=\''+k+'\';if(!ed.name||ed.name===o)ed.name=t(\'t_'+k+'\');render()">'+TY[k]+' '+t('t_'+k)+'</button>'}).join('')+'</div>'+
+'<label>'+t('name')+'</label><input id="f_name" value="'+esc(ed.name||t('t_'+ed.type))+'"><label>'+t('unit')+'</label><select id="f_unit">'+UN.map(function(u){return '<option value="'+u+'" '+(ed.unit===u?'selected':'')+'>'+t('u_'+u)+'</option>'}).join('')+'</select>'+
+'<label>'+t('qty')+'</label><input id="f_qty" type="number" step="0.5" min="0" inputmode="decimal" value="'+ed.qty+'">';
+if(n)h+='<label>'+t('rate')+'</label><input id="f_rate" type="number" step="0.5" min="0" inputmode="decimal" value="'+ed.rate+'"><label>'+t('start')+'</label><input id="f_start" type="date" max="'+TODAY+'" value="'+ed.start+'">';
+h+='<button class="btn full" onclick="saveV()">'+t('save')+'</button><button class="btn ghost full" onclick="ed=null;render()">'+t('cancel')+'</button>';
+if(!n){h+='<div class="card"><b>'+t('newrate')+'</b><label>'+t('rate')+'</label><input id="nr" type="number" step="0.5" min="0" inputmode="decimal" value="'+rateAt(ed,TODAY)+'"><label>'+t('from')+'</label><input id="nf" type="date" value="'+TODAY+'"><button class="btn full" onclick="applyRate()">'+t('apply')+'</button>'+
+'<div class="mu sm">'+t('hist')+': '+ed.rates.map(function(r){return r.from+' → '+money(r.rate)}).join(' · ')+'</div></div>'+
+'<button class="btn red full" onclick="delV(\''+ed.id+'\')">'+(sure===ed.id?t('sure'):t('del'))+'</button>'}
+return h}
+var h2='<h2>'+t('setup')+'</h2>';
+S.v.forEach(function(v){h2+='<div class="card row"><span class="em">'+TY[v.type]+'</span><div class="g"><b>'+esc(v.name)+'</b><div class="mu sm">'+money(rateAt(v,TODAY))+' / '+t('u_'+v.unit)+'</div></div><button class="btn ghost" onclick="editV(\''+v.id+'\')">✎</button></div>'});
+h2+='<button class="btn full" onclick="addV()">+ '+t('add')+'</button><h2>'+t('lang')+'</h2><div class="chips">'+['en','hi','mr'].map(function(l){return '<button class="chip '+(S.lang===l?'on':'')+'" onclick="setLang(\''+l+'\')">'+{en:'English',hi:'हिन्दी',mr:'मराठी'}[l]+'</button>'}).join('')+'</div>'+
+'<h2>'+t('backup')+'</h2><p class="mu sm">'+t('bk')+'</p><textarea id="bk">'+esc(JSON.stringify(S))+'</textarea><div class="row"><button class="btn ghost g" onclick="cp()">'+t('copy')+'</button><button class="btn g" onclick="rs()">'+t('restore')+'</button></div><p id="bm" class="mu sm"></p>';
+return h2}
+function keep(){var a=$('#f_name'),b=$('#f_qty'),c=$('#f_unit');if(a)ed.name=a.value;if(b)ed.qty=+b.value;if(c)ed.unit=c.value}
+function saveV(){
+keep();var nm=ed.name.trim()||t('t_'+ed.type),q=Math.max(0,+ed.qty||0);
+if(!ed.id){var r=+$('#f_rate').value||0,st=$('#f_start').value||TODAY;
+S.v.push({id:'v'+Date.now(),type:ed.type,name:nm,unit:ed.unit,qty:q,start:st,rates:[{from:st,rate:r}]})}
+else{var v=vend(ed.id);if(q!==v.qty){var d=parse(v.start),end=parse(TODAY);while(d<end){var k=v.id+'|'+iso(d);if(!(k in S.e))S.e[k]=v.qty;d.setDate(d.getDate()+1)}}
+v.type=ed.type;v.name=nm;v.unit=ed.unit;v.qty=q}
+save();ed=null;render()}
+function applyRate(){var v=vend(ed.id),r=+$('#nr').value,f=$('#nf').value||TODAY;if(isNaN(r))return;
+v.rates=v.rates.filter(function(x){return x.from!==f});v.rates.push({from:f,rate:r});v.rates.sort(function(a,b){return a.from<b.from?-1:1});save();ed=JSON.parse(JSON.stringify(v));render()}
+function delV(id){if(sure!==id){sure=id;render();return}
+S.v=S.v.filter(function(x){return x.id!==id});Object.keys(S.e).forEach(function(k){if(k.indexOf(id+'|')===0)delete S.e[k]});save();ed=null;sure=null;render()}
+function cp(){var a=$('#bk');a.select();try{navigator.clipboard.writeText(a.value)}catch(e){try{document.execCommand('copy')}catch(x){}}$('#bm').textContent=t('ok')}
+function rs(){try{var o=JSON.parse($('#bk').value);if(!o||!Array.isArray(o.v)||typeof o.e!=='object')throw 0;o.lang=o.lang||S.lang;o.p=o.p||{};S=o;save();render()}catch(e){$('#bm').textContent=t('bad')}}
+
+function render(){
+if(!S.lang){$('#nav').innerHTML='';$('#main').innerHTML='<h2>Daily Hisab</h2><p class="mu">Choose your language · भाषा चुनें · भाषा निवडा</p>'+['en','hi','mr'].map(function(l){return '<button class="btn full" onclick="setLang(\''+l+'\')">'+{en:'English',hi:'हिन्दी',mr:'मराठी'}[l]+'</button>'}).join('');return}
+document.documentElement.lang=S.lang;
+$('#main').innerHTML={today:vToday,cal:vCal,bill:vBill,setup:vSetup}[tab]();
+$('#nav').innerHTML=[['today','🏠'],['cal','📅'],['bill','🧾'],['setup','⚙️']].map(function(x){return '<button class="'+(tab===x[0]?'on':'')+'" onclick="go(\''+x[0]+'\')">'+x[1]+'<br>'+t(x[0])+'</button>'}).join('')}
+render();
+</script>
+</body>
+</html>
